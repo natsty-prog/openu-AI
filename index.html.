@@ -1,0 +1,387 @@
+<!--
+דף "מצגות" – יחידה 3 | יצירת חומרי לימוד
+עיצוב מותאם למיתוג המחלקה לפדגוגיה דיגיטלית (ינואר 2025):
+Primary #C11E6B | Secondary #E599B6 | Dark #231F20 | Green #6CB79D | Yellow #EBA521 | White #FFFFFF
+Font: Heebo (Bold/Regular/ExtraBold)  :contentReference[oaicite:0]{index=0}
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --brand-primary:#C11E6B;
+    --brand-secondary:#E599B6;
+    --brand-dark:#231F20;
+    --brand-green:#6CB79D;
+    --brand-yellow:#EBA521;
+    --brand-white:#FFFFFF;
+    --bg:#0f0d0e;
+    --card:#151113;
+    --card2:#1d1719;
+    --text:#ffffff;
+    --muted:#d9d3d5;
+    --muted2:#bfb6bb;
+    --border:rgba(255,255,255,.10);
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --radius:18px;
+  }
+
+  .ai-page{
+    font-family: "Heebo", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    direction: rtl;
+    text-align: right;
+    color: var(--text);
+    background: radial-gradient(1200px 600px at 90% -10%, rgba(193,30,107,.35), transparent 60%),
+                radial-gradient(900px 500px at 10% 10%, rgba(108,183,157,.28), transparent 55%),
+                linear-gradient(180deg, #0d0b0c 0%, #0a0809 100%);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .ai-hero{
+    position: relative;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(193,30,107,.18), rgba(229,153,182,.10) 35%, rgba(108,183,157,.10));
+    border-radius: var(--radius);
+    padding: 18px 18px 14px 18px;
+    overflow: hidden;
+  }
+
+  .ai-hero:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:
+      radial-gradient(600px 180px at 90% 0%, rgba(235,165,33,.22), transparent 60%),
+      radial-gradient(500px 220px at 0% 80%, rgba(193,30,107,.22), transparent 60%);
+    pointer-events:none;
+  }
+
+  .ai-title{
+    position: relative;
+    margin: 0 0 6px 0;
+    font-weight: 800;
+    letter-spacing: .2px;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .ai-subtitle{
+    position: relative;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 70ch;
+  }
+
+  .ai-badges{
+    position: relative;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .ai-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    font-size: 12.5px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .ai-dot{
+    width:10px; height:10px; border-radius:999px;
+    background: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(193,30,107,.18);
+  }
+  .ai-dot.green{ background: var(--brand-green); box-shadow: 0 0 0 3px rgba(108,183,157,.18);}
+  .ai-dot.yellow{ background: var(--brand-yellow); box-shadow: 0 0 0 3px rgba(235,165,33,.18);}
+
+  .ai-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .ai-card{
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  .ai-card h2{
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 800;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .ai-step-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width: 26px; height: 26px;
+    border-radius: 10px;
+    background: rgba(193,30,107,.18);
+    border: 1px solid rgba(193,30,107,.35);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .ai-card p{
+    margin: 0 0 10px 0;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .ai-list{
+    margin: 0;
+    padding-right: 18px;
+    color: var(--text);
+  }
+  .ai-list li{
+    margin: 7px 0;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .ai-list li span{
+    color: var(--muted);
+  }
+
+  .ai-note{
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px dashed rgba(229,153,182,.45);
+    background: rgba(229,153,182,.10);
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .ai-embed-wrap{
+    border: 1px solid rgba(108,183,157,.28);
+    background: rgba(108,183,157,.08);
+    border-radius: var(--radius);
+    padding: 12px;
+  }
+
+  .ai-embed-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin: 0 0 10px 0;
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .ai-embed-hint{
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .ai-iframe{
+    width: 100%;
+    border: 0;
+    border-radius: 14px;
+    overflow:hidden;
+  }
+
+  .ai-check{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .ai-check label{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .ai-check input{
+    margin-top: 3px;
+    accent-color: var(--brand-green);
+  }
+
+  .ai-footer{
+    margin-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.10);
+    padding-top: 12px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items:center;
+    justify-content: space-between;
+    color: var(--muted2);
+    font-size: 12.5px;
+  }
+
+  .ai-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .ai-pill .ai-dot{ width:8px; height:8px; box-shadow:none; }
+
+  /* Optional: compact mode for LMS blocks */
+  @media (min-width: 900px){
+    .ai-grid{
+      grid-template-columns: 1fr 1fr;
+    }
+    .ai-card.full{
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<div class="ai-page">
+
+  <!-- HERO -->
+  <section class="ai-hero">
+    <h1 class="ai-title">מצגות בעזרת AI — מתהליך לחשיפה</h1>
+    <p class="ai-subtitle">
+      בדף זה נשתמש בבינה מלאכותית כדי להפוך רעיון למצגת לימודית: מהפיצוח הראשוני, דרך שלד ורצף שקופיות,
+      ועד בחירה בתרחיש עבודה שמתאים לכם.
+    </p>
+
+    <div class="ai-badges">
+      <span class="ai-badge"><span class="ai-dot"></span> מפיצוח → שלד</span>
+      <span class="ai-badge"><span class="ai-dot green"></span> תרחישים מוכנים</span>
+      <span class="ai-badge"><span class="ai-dot yellow"></span> עריכה ובקרה</span>
+    </div>
+  </section>
+
+  <!-- WHAT WE’LL DO -->
+  <section class="ai-card full" aria-label="מטרות הדף">
+    <h2><span class="ai-step-num">∞</span> מה נעשה בדף הזה?</h2>
+    <ul class="ai-list">
+      <li>לפצח נושא לימודי ולהפוך אותו למצגת <span>(מה המסר? למי? ולמה עכשיו?)</span></li>
+      <li>לבנות שלד ורצף שקופיות <span>(רצף למידה, לא “מצגת גמורה”)</span></li>
+      <li>ליצור מצגת חדשה או לעבוד על בסיס מצגת קיימת</li>
+      <li>להעריך את התוצר לפני שילובו בקורס <span>(דיוק, בהירות, התאמה לסטודנטים)</span></li>
+    </ul>
+  </section>
+
+  <div class="ai-grid">
+
+    <!-- STEP 1 -->
+    <section class="ai-card" aria-label="שלב 1 הגדרה ודיוק">
+      <h2><span class="ai-step-num">1</span> שלב 1 — הגדרה ודיוק</h2>
+      <p>לפני שמבקשים מה-AI ליצור מצגת, מדייקים את הקלט.</p>
+
+      <ul class="ai-list">
+        <li>מה מטרת המצגת?</li>
+        <li>מי קהל היעד?</li>
+        <li>האם מדובר במבוא, בהעמקה או בסיכום?</li>
+        <li>באילו חומרים נשתמש? <span>(טקסט, סילבוס, PPT)</span></li>
+      </ul>
+
+      <div class="ai-note">שלב זה נועד לדייק את הקלט לפני העבודה עם AI.</div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="ai-card" aria-label="שלב 2 בניית שלד למצגת">
+      <h2><span class="ai-step-num">2</span> שלב 2 — בניית שלד למצגת</h2>
+      <p>
+        בשלב זה נבקש מה-AI להציע <strong>שלד ורצף שקופיות</strong>, ולא מצגת גמורה.
+      </p>
+
+      <div class="ai-note">
+        הערה פנימית: כאן אפשר לשלב טופס קצר למילוי והעתקה/הדבקה, או סוכן שמייצר “שלד למצגת” לפי פרטים.
+      </div>
+    </section>
+
+    <!-- STEP 3: GENIALLY -->
+    <section class="ai-card full" aria-label="שלב 3 בחירת תרחיש עבודה">
+      <h2><span class="ai-step-num">3</span> שלב 3 — בחירת תרחיש עבודה</h2>
+
+      <div class="ai-embed-wrap">
+        <div class="ai-embed-title">
+          <span>בחרו תרחיש והמשיכו ליישום</span>
+          <span class="ai-embed-hint">טיפ: לחצו על הכרטיסיה שמתאימה לכם</span>
+        </div>
+
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px;">
+          <iframe
+            class="ai-iframe"
+            title="תרחישי עבודה למצגות (Genially)"
+            src="https://view.genially.com/697a7bd1b339c93fcc8dc287"
+            style="position:absolute; top:0; left:0; width:100%; height:100%;"
+            allowfullscreen="true"
+            scrolling="yes"
+            allow="autoplay; fullscreen; clipboard-write"
+          ></iframe>
+        </div>
+
+        <p style="margin:10px 0 0 0; color: var(--muted);">
+          בחרו את התרחיש שמתאים לכם, וצפו בהדגמה ובכלים הרלוונטיים לכל מצב.
+        </p>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="ai-card full" aria-label="שלב 4 בדיקה ועריכה">
+      <h2><span class="ai-step-num">4</span> שלב 4 — בדיקה ועריכה של התוצר</h2>
+      <p>לפני שמכניסים את המצגת לקורס, עושים בדיקה מהירה ומדייקים.</p>
+
+      <div class="ai-check" role="group" aria-label="צ׳קליסט בדיקה">
+        <label><input type="checkbox"> התוכן תואם למטרות הלמידה</label>
+        <label><input type="checkbox"> הרצף ברור</label>
+        <label><input type="checkbox"> השפה מתאימה לסטודנטים</label>
+      </div>
+
+      <div class="ai-note">
+        העריכה היא חלק בלתי נפרד מתהליך העבודה עם AI. במידת הצורך ניתן לבקש ניסוחים חלופיים, להוסיף דוגמאות או לדייק חלקים מסוימים.
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER / BRAND PILLS -->
+  <div class="ai-footer" aria-label="מיתוג והערות">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <span class="ai-pill"><span class="ai-dot"></span> #C11E6B</span>
+      <span class="ai-pill"><span class="ai-dot green"></span> #6CB79D</span>
+      <span class="ai-pill"><span class="ai-dot yellow"></span> #EBA521</span>
+      <span class="ai-pill"><span class="ai-dot" style="background:#E599B6"></span> #E599B6</span>
+    </div>
+    <div>פדגוגיה דיגיטלית | האוניברסיטה הפתוחה</div>
+  </div>
+
+</div>
