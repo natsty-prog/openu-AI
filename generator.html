@@ -1,0 +1,971 @@
+<!--
+  מחולל מצגות חכם — שלב אחר שלב
+  המחלקה לפדגוגיה דיגיטלית | האוניברסיטה הפתוחה
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:   #C11E6B;
+    --primary-l: #FDF4F7;
+    --secondary: #E599B6;
+    --yellow:    #EBA521;
+    --yellow-l:  #FFF8EC;
+    --green:     #6CB79D;
+    --green-l:   #F0F7F3;
+    --dark:      #231F20;
+    --text:      #3a3a3a;
+    --muted:     #6b6b6b;
+    --border:    #E5E5E5;
+    --bg:        #F4F5F7;
+    --white:     #ffffff;
+    --radius:    12px;
+  }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    direction: rtl;
+    text-align: right;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  /* ── Shell ── */
+  .wiz-shell {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* ── Top bar ── */
+  .wiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .wiz-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wiz-brand-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+
+  .wiz-brand-name {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .wiz-step-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ── Progress ── */
+  .wiz-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .wiz-prog-seg {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border);
+    transition: background .4s;
+  }
+
+  .wiz-prog-seg.done  { background: var(--primary); }
+  .wiz-prog-seg.active { background: var(--secondary); }
+
+  /* ── Card ── */
+  .wiz-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+  }
+
+  /* ── Step header ── */
+  .wiz-step-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .wiz-step-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: var(--primary-l);
+    flex-shrink: 0;
+  }
+
+  .wiz-step-header h2 {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+
+  .wiz-step-sub {
+    font-size: 0.92rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    padding-right: 54px;
+  }
+
+  /* ── Divider ── */
+  .wiz-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* ── Form fields ── */
+  .wiz-field { margin-bottom: 20px; }
+
+  .wiz-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 7px;
+  }
+
+  .wiz-label span {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .wiz-input, .wiz-select, .wiz-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.95rem;
+    color: var(--dark);
+    background: var(--white);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    direction: rtl;
+  }
+
+  .wiz-textarea { min-height: 90px; resize: vertical; }
+
+  .wiz-input:focus, .wiz-select:focus, .wiz-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(193,30,107,.08);
+  }
+
+  /* ── Radio pills (goal type) ── */
+  .wiz-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wiz-pill-opt { display: none; }
+
+  .wiz-pill-opt + label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+    user-select: none;
+  }
+
+  .wiz-pill-opt:checked + label {
+    border-color: var(--primary);
+    background: var(--primary-l);
+    color: var(--primary);
+  }
+
+  /* ── Scenario cards (step 2) ── */
+  .wiz-scenarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) { .wiz-scenarios { grid-template-columns: 1fr; } }
+
+  .wiz-sc-opt { display: none; }
+
+  .wiz-sc-opt + label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 14px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    transition: all .18s;
+  }
+
+  .wiz-sc-opt + label:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 14px rgba(193,30,107,.08);
+    transform: translateY(-2px);
+  }
+
+  .wiz-sc-opt:checked + label {
+    border-color: var(--primary);
+    background: var(--primary-l);
+    box-shadow: 0 4px 14px rgba(193,30,107,.12);
+  }
+
+  .sc-emoji { font-size: 22px; }
+
+  .sc-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.35;
+  }
+
+  .wiz-sc-opt:checked + label .sc-title { color: var(--primary); }
+
+  .sc-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── Slider ── */
+  .wiz-slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .wiz-slider {
+    flex: 1;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+
+  .wiz-slider-val {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary);
+    min-width: 32px;
+    text-align: center;
+  }
+
+  /* ── Tone chips ── */
+  .wiz-tone-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 400px) { .wiz-tone-grid { grid-template-columns: 1fr 1fr; } }
+
+  .wiz-tone-opt { display: none; }
+
+  .wiz-tone-opt + label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+  }
+
+  .wiz-tone-opt + label .tone-icon { font-size: 18px; }
+
+  .wiz-tone-opt:checked + label {
+    border-color: var(--green);
+    background: var(--green-l);
+    color: var(--dark);
+  }
+
+  /* ── Result card ── */
+  .wiz-result-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .wiz-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--primary-l);
+    border: 1px solid rgba(193,30,107,.2);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .wiz-tag.green {
+    background: var(--green-l);
+    border-color: rgba(108,183,157,.3);
+    color: #2e7a60;
+  }
+
+  .wiz-tag.yellow {
+    background: var(--yellow-l);
+    border-color: rgba(235,165,33,.3);
+    color: #8a6000;
+  }
+
+  /* Prompt output */
+  .wiz-prompt-wrap {
+    background: #FAFAFA;
+    border: 1.5px solid var(--border);
+    border-right: 4px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .wiz-prompt-text {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .wiz-copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .wiz-copy-btn:hover { opacity: .88; }
+
+  /* Skeleton preview */
+  .wiz-skeleton {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .wiz-skeleton-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .wiz-slide {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+
+  .wiz-slide-num {
+    min-width: 22px; height: 22px;
+    background: var(--primary-l);
+    border: 1px solid rgba(193,30,107,.2);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .wiz-slide-content {}
+  .wiz-slide-title { font-size: 0.88rem; font-weight: 700; color: var(--dark); }
+  .wiz-slide-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  /* Tools row */
+  .wiz-tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .wiz-tool-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    color: var(--dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* ── Navigation buttons ── */
+  .wiz-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    gap: 10px;
+  }
+
+  .wiz-btn-back {
+    padding: 10px 20px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .wiz-btn-back:hover { border-color: var(--dark); color: var(--dark); }
+
+  .wiz-btn-next {
+    flex: 1;
+    max-width: 260px;
+    padding: 11px 24px;
+    background: var(--primary);
+    border: none;
+    border-radius: 999px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity .15s, transform .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .wiz-btn-next:hover { opacity: .9; transform: translateY(-1px); }
+
+  .wiz-btn-restart {
+    padding: 10px 20px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .wiz-btn-restart:hover { color: var(--dark); border-color: var(--dark); }
+
+  /* ── Checklist ── */
+  .wiz-checklist { display: flex; flex-direction: column; gap: 8px; }
+
+  .wiz-check-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-size: 0.92rem;
+    color: var(--dark);
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .wiz-check-item:hover { border-color: var(--green); }
+  .wiz-check-item input { accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* ── Steps fade ── */
+  .wiz-step { display: none; animation: fadeIn .28s ease; }
+  .wiz-step.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Note box ── */
+  .wiz-note {
+    background: var(--yellow-l);
+    border-right: 4px solid var(--yellow);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: #7a5500;
+    line-height: 1.65;
+    margin-top: 16px;
+  }
+
+  .wiz-success-note {
+    background: var(--green-l);
+    border-right: 4px solid var(--green);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    color: #155724;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+</style>
+
+<div class="wiz-shell">
+
+  <!-- Top bar -->
+  <div class="wiz-topbar">
+    <div class="wiz-brand">
+      <div class="wiz-brand-dot"></div>
+      <span class="wiz-brand-name">פדגוגיה דיגיטלית | האוניברסיטה הפתוחה</span>
+    </div>
+    <span class="wiz-step-label" id="stepLabel">שלב 1 מתוך 4</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="wiz-progress">
+    <div class="wiz-prog-seg active" id="seg1"></div>
+    <div class="wiz-prog-seg" id="seg2"></div>
+    <div class="wiz-prog-seg" id="seg3"></div>
+    <div class="wiz-prog-seg" id="seg4"></div>
+  </div>
+
+  <!-- Card -->
+  <div class="wiz-card">
+
+    <!-- ══ STEP 1: Define ══ -->
+    <div class="wiz-step active" id="step1">
+      <div class="wiz-step-header">
+        <div class="wiz-step-icon">🎯</div>
+        <h2>הגדרת המצגת</h2>
+      </div>
+      <p class="wiz-step-sub">כמה פרטים קצרים יאפשרו לנו לבנות עבורכם פרומפט מדויק.</p>
+      <div class="wiz-divider"></div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">שם הקורס <span>(אופציונלי)</span></label>
+        <input class="wiz-input" type="text" id="f_course" placeholder="לדוגמה: מבוא לסוציולוגיה">
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">נושא המצגת <span>(חובה)</span></label>
+        <input class="wiz-input" type="text" id="f_topic" placeholder="לדוגמה: תיאוריית הקונפליקט החברתי">
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">קהל היעד — שנת לימוד</label>
+        <div class="wiz-pills">
+          <input class="wiz-pill-opt" type="radio" name="year" id="y1" value="שנה א'"><label for="y1">שנה א'</label>
+          <input class="wiz-pill-opt" type="radio" name="year" id="y2" value="שנה ב'"><label for="y2">שנה ב'</label>
+          <input class="wiz-pill-opt" type="radio" name="year" id="y3" value="שנה ג'" checked><label for="y3">שנה ג'</label>
+          <input class="wiz-pill-opt" type="radio" name="year" id="y4" value="שנה ד'"><label for="y4">שנה ד'</label>
+          <input class="wiz-pill-opt" type="radio" name="year" id="ym" value="מעורב"><label for="ym">מעורב</label>
+        </div>
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">מטרת המצגת</label>
+        <div class="wiz-pills">
+          <input class="wiz-pill-opt" type="radio" name="goal" id="g1" value="מבוא לנושא" checked><label for="g1">📖 מבוא לנושא</label>
+          <input class="wiz-pill-opt" type="radio" name="goal" id="g2" value="העמקה"><label for="g2">🔍 העמקה</label>
+          <input class="wiz-pill-opt" type="radio" name="goal" id="g3" value="סיכום יחידה"><label for="g3">✅ סיכום יחידה</label>
+          <input class="wiz-pill-opt" type="radio" name="goal" id="g4" value="הכנה למטלה"><label for="g4">📝 הכנה למטלה</label>
+        </div>
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">רקע הסטודנטים בנושא</label>
+        <div class="wiz-pills">
+          <input class="wiz-pill-opt" type="radio" name="bg" id="b1" value="ללא רקע מוקדם" checked><label for="b1">ללא רקע</label>
+          <input class="wiz-pill-opt" type="radio" name="bg" id="b2" value="רקע בסיסי"><label for="b2">רקע בסיסי</label>
+          <input class="wiz-pill-opt" type="radio" name="bg" id="b3" value="רקע מוצק"><label for="b3">רקע מוצק</label>
+        </div>
+      </div>
+
+      <div class="wiz-nav">
+        <div></div>
+        <button class="wiz-btn-next" onclick="goTo(2)">המשך לבחירת תרחיש ←</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2: Scenario ══ -->
+    <div class="wiz-step" id="step2">
+      <div class="wiz-step-header">
+        <div class="wiz-step-icon">🗂️</div>
+        <h2>מה התרחיש שלך?</h2>
+      </div>
+      <p class="wiz-step-sub">בחרו את נקודת ההתחלה — זה ישפיע על הפרומפט שנבנה עבורכם.</p>
+      <div class="wiz-divider"></div>
+
+      <div class="wiz-scenarios">
+        <input class="wiz-sc-opt" type="radio" name="scenario" id="sc1" value="scratch" checked>
+        <label for="sc1">
+          <span class="sc-emoji">✨</span>
+          <span class="sc-title">מצגת מאפס</span>
+          <span class="sc-desc">יש לי נושא, אין לי עדיין תוכן</span>
+        </label>
+
+        <input class="wiz-sc-opt" type="radio" name="scenario" id="sc2" value="existing">
+        <label for="sc2">
+          <span class="sc-emoji">📝</span>
+          <span class="sc-title">שיפור מצגת קיימת</span>
+          <span class="sc-desc">יש לי מצגת, אני רוצה לשפר ולעדכן</span>
+        </label>
+
+        <input class="wiz-sc-opt" type="radio" name="scenario" id="sc3" value="materials">
+        <label for="sc3">
+          <span class="sc-emoji">📚</span>
+          <span class="sc-title">מחומרים קיימים</span>
+          <span class="sc-desc">יש לי טקסטים, PDF, סילבוס</span>
+        </label>
+
+        <input class="wiz-sc-opt" type="radio" name="scenario" id="sc4" value="visual">
+        <label for="sc4">
+          <span class="sc-emoji">🎨</span>
+          <span class="sc-title">המחשה ועיצוב</span>
+          <span class="sc-desc">יש לי תוכן, אני רוצה להמחיש חזותית</span>
+        </label>
+      </div>
+
+      <div class="wiz-nav">
+        <button class="wiz-btn-back" onclick="goTo(1)">← חזרה</button>
+        <button class="wiz-btn-next" onclick="goTo(3)">המשך להגדרות ←</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3: Preferences ══ -->
+    <div class="wiz-step" id="step3">
+      <div class="wiz-step-header">
+        <div class="wiz-step-icon">⚙️</div>
+        <h2>העדפות המצגת</h2>
+      </div>
+      <p class="wiz-step-sub">כמה פרטים אחרונים לפני שמייצרים את הפרומפט.</p>
+      <div class="wiz-divider"></div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">כמה שקפים? <span>(לא כולל שקף פתיחה וסיום)</span></label>
+        <div class="wiz-slider-wrap">
+          <input class="wiz-slider" type="range" id="f_slides" min="4" max="14" value="7" oninput="document.getElementById('slidesVal').textContent=this.value">
+          <span class="wiz-slider-val" id="slidesVal">7</span>
+        </div>
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">סגנון המצגת</label>
+        <div class="wiz-tone-grid">
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t1" value="אקדמי ומסודר" checked>
+          <label for="t1"><span class="tone-icon">🎓</span>אקדמי</label>
+
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t2" value="שיחתי וברור">
+          <label for="t2"><span class="tone-icon">💬</span>שיחתי</label>
+
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t3" value="מחולל שאלות ומעורר חשיבה">
+          <label for="t3"><span class="tone-icon">💡</span>מעורר חשיבה</label>
+
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t4" value="קצר ותמציתי">
+          <label for="t4"><span class="tone-icon">⚡</span>תמציתי</label>
+
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t5" value="עם דוגמאות ואיורים מהחיים">
+          <label for="t5"><span class="tone-icon">🌍</span>דוגמאות חיים</label>
+
+          <input class="wiz-tone-opt" type="radio" name="tone" id="t6" value="אינטראקטיבי עם שאלות לסטודנטים">
+          <label for="t6"><span class="tone-icon">🙋</span>אינטראקטיבי</label>
+        </div>
+      </div>
+
+      <div class="wiz-field">
+        <label class="wiz-label">בקשה מיוחדת <span>(אופציונלי)</span></label>
+        <textarea class="wiz-textarea" id="f_extra" placeholder="לדוגמה: לכלול שאלת פתיחה מעוררת עניין, להתמקד בדוגמאות ישראליות, לסיים בשאלת חשיבה..."></textarea>
+      </div>
+
+      <div class="wiz-nav">
+        <button class="wiz-btn-back" onclick="goTo(2)">← חזרה</button>
+        <button class="wiz-btn-next" onclick="buildAndGo()">צרו לי פרומפט! ✨</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 4: Result ══ -->
+    <div class="wiz-step" id="step4">
+      <div class="wiz-step-header">
+        <div class="wiz-step-icon">✅</div>
+        <h2>הפרומפט המוכן שלך</h2>
+      </div>
+      <p class="wiz-step-sub">העתיקו את הפרומפט לתוך ChatGPT או Claude והתחילו לעבוד.</p>
+      <div class="wiz-divider"></div>
+
+      <div class="wiz-result-summary" id="resultTags"></div>
+
+      <div class="wiz-success-note">
+        🎉 הפרומפט נבנה בהתאמה אישית על פי הפרטים שמילאתם. בדקו, ערכו במידת הצורך, והדביקו לכלי AI.
+      </div>
+
+      <!-- Prompt output -->
+      <div class="wiz-prompt-wrap">
+        <div class="wiz-prompt-text" id="promptOutput"></div>
+        <button class="wiz-copy-btn" onclick="copyResult()">📋 העתק פרומפט</button>
+      </div>
+
+      <!-- Skeleton preview -->
+      <div class="wiz-skeleton">
+        <div class="wiz-skeleton-title">✦ שלד מצגת מוצע</div>
+        <div id="skeletonOutput"></div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="wiz-skeleton-title" style="margin-bottom:10px;">לפני הכנסה לקורס — צ׳קליסט מהיר</div>
+      <div class="wiz-checklist">
+        <label class="wiz-check-item"><input type="checkbox"> התוכן תואם למטרות הלמידה</label>
+        <label class="wiz-check-item"><input type="checkbox"> הרצף הגיוני — מהפשוט למורכב</label>
+        <label class="wiz-check-item"><input type="checkbox"> השפה מתאימה לרמת הסטודנטים</label>
+        <label class="wiz-check-item"><input type="checkbox"> כל שקף מכיל מסר אחד ברור</label>
+        <label class="wiz-check-item"><input type="checkbox"> יש שקף פתיחה מעורר עניין</label>
+      </div>
+
+      <!-- Tools -->
+      <div class="wiz-note" style="margin-top:16px;">
+        💡 <strong>טיפ:</strong> לאחר קבלת השלד מה-AI, בקשו הרחבה לכל שקף בנפרד. כך תקבלו תוצאות איכותיות יותר.
+      </div>
+
+      <div class="wiz-skeleton-title" style="margin: 16px 0 8px;">כלים מומלצים להמשך</div>
+      <div class="wiz-tools-row" id="toolsOutput"></div>
+
+      <div class="wiz-nav">
+        <button class="wiz-btn-restart" onclick="restart()">🔄 צור מצגת חדשה</button>
+        <button class="wiz-btn-back" onclick="goTo(3)">← ערוך פרטים</button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /shell -->
+
+<script>
+  const TOTAL = 4;
+  let current = 1;
+
+  function goTo(n) {
+    document.getElementById('step' + current).classList.remove('active');
+    current = n;
+    document.getElementById('step' + current).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    document.getElementById('stepLabel').textContent = 'שלב ' + current + ' מתוך ' + TOTAL;
+    for (let i = 1; i <= TOTAL; i++) {
+      const seg = document.getElementById('seg' + i);
+      seg.className = 'wiz-prog-seg';
+      if (i < current) seg.classList.add('done');
+      else if (i === current) seg.classList.add('active');
+    }
+  }
+
+  function getVal(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  }
+
+  function buildAndGo() {
+    const topic    = document.getElementById('f_topic').value.trim() || '[הנושא שלך]';
+    const course   = document.getElementById('f_course').value.trim();
+    const year     = getVal('year') || 'שנה ג\'';
+    const goal     = getVal('goal') || 'מבוא לנושא';
+    const bg       = getVal('bg')   || 'ללא רקע מוקדם';
+    const scenario = getVal('scenario') || 'scratch';
+    const slides   = document.getElementById('f_slides').value;
+    const tone     = getVal('tone') || 'אקדמי ומסודר';
+    const extra    = document.getElementById('f_extra').value.trim();
+
+    const courseStr = course ? ' בקורס "' + course + '"' : '';
+
+    // ── Build prompt ──
+    let prompt = '';
+
+    if (scenario === 'scratch') {
+      prompt = `אני מרצה${courseStr} באוניברסיטה הפתוחה.
+אני רוצה לבנות מצגת לימודית על הנושא: ${topic}.
+קהל היעד: סטודנטים ב${year}, ${bg}.
+מטרת המצגת: ${goal}.
+סגנון רצוי: ${tone}.
+
+בנה לי שלד מצגת של ${slides} שקפי תוכן (לא כולל פתיחה וסיום).
+לכל שקף ציין:
+- כותרת ברורה (עד 6 מילים)
+- מסר מרכזי אחד (משפט אחד)
+- 3–4 נקודות תוכן קצרות
+
+הוסף גם:
+- שקף פתיחה עם שאלה מעוררת עניין
+- שקף סיום עם סיכום ושאלת חשיבה`;
+    } else if (scenario === 'existing') {
+      prompt = `אני מרצה${courseStr} באוניברסיטה הפתוחה.
+להלן תוכן מצגת קיימת שלי (כותרות + נקודות עיקריות):
+[הדבק כאן את תוכן המצגת]
+
+הנושא: ${topic} | קהל: סטודנטים ב${year}.
+מטרה: ${goal}. סגנון: ${tone}.
+
+בצע עבורי:
+1. בדוק אם הרצף הפדגוגי מוביל מהפשוט למורכב.
+2. זהה שקפים עמוסים מדי (מעל 4 נקודות) והצע פיצול.
+3. נסח מחדש כותרות שאינן ברורות — השאר ${slides} שקפים.
+4. הוסף שקף סיכום עם שאלת חשיבה לסיום.`;
+    } else if (scenario === 'materials') {
+      prompt = `אני מרצה${courseStr} באוניברסיטה הפתוחה.
+להלן קטע מחומרי הקורס שלי:
+[הדבק כאן את הטקסט — עד כ-500 מילים]
+
+הנושא: ${topic} | קהל: סטודנטים ב${year}.
+מטרה: ${goal}. סגנון: ${tone}.
+
+בצע עבורי:
+1. זקק ${Math.min(5, parseInt(slides)-1)} רעיונות מרכזיים מהחומר.
+2. בנה שלד מצגת של ${slides} שקפים על בסיסם.
+3. לכל שקף: כותרת + 3 נקודות + דוגמה קצרה מהטקסט.
+4. הוסף שקף פתיחה ושקף סיכום.`;
+    } else {
+      prompt = `אני מרצה${courseStr} באוניברסיטה הפתוחה.
+להלן תוכן שקף מהמצגת שלי על ${topic}:
+כותרת: [כותרת השקף]
+תוכן: [הדבק את הנקודות]
+
+קהל: סטודנטים ב${year}. סגנון: ${tone}.
+
+הצע לי 3 דרכים להמחיש את הרעיון חזותית:
+(לדוגמה: תרשים זרימה, אינפוגרפיקה, ציר זמן, טבלת השוואה)
+לכל הצעה: תאר מה יופיע ואיך לבנות ב-Canva.
+
+בנוסף — פשט את הטקסט בשקף ל-3 נקודות מפתח בלבד.`;
+    }
+
+    if (extra) prompt += '\n\nבקשה נוספת: ' + extra;
+
+    // ── Build skeleton slides ──
+    const skeletonMap = {
+      scratch:   ['שקף פתיחה — שאלה מעוררת עניין','רקע והקשר — מדוע הנושא חשוב','מושגי יסוד — הגדרות ומסגרת','הרחבה — עיקרי הנושא','דוגמאות ויישומים','ניתוח ודיון','סיכום ושאלת חשיבה'],
+      existing:  ['פתיחה — מיצוב הנושא','חלק א — בדיקת רצף','חלק ב — חיזוק נקודות מפתח','חלק ג — פיצול ועיבוי','שקף ביניים — בדיקת הבנה','שקף סיכום — שאלת חשיבה'],
+      materials: ['שקף פתיחה — הקשר ומסגרת','רעיון מרכזי 1','רעיון מרכזי 2','רעיון מרכזי 3','דוגמה מהחומר המקורי','קשרים ומסקנות','סיכום — מה לקחנו?'],
+      visual:    ['שקף 1 — זיהוי: מה אפשר להמחיש?','רעיון חזותי א׳ — דיאגרמה','רעיון חזותי ב׳ — אינפוגרפיקה','רעיון חזותי ג׳ — ציר זמן','פישוט הטקסט','שקף סיום מעוצב'],
+    };
+
+    const skSlides = skeletonMap[scenario] || skeletonMap['scratch'];
+    const skNotes  = ['הצגת נושא + שאלה פותחת','הגדרות וכותרות', 'נקודות מפתח', 'דוגמאות', 'עיקרי הנושא', 'ניתוח', 'סיכום'];
+
+    let skHtml = '';
+    skSlides.forEach((s, i) => {
+      skHtml += `<div class="wiz-slide">
+        <div class="wiz-slide-num">${i+1}</div>
+        <div class="wiz-slide-content">
+          <div class="wiz-slide-title">${s}</div>
+          <div class="wiz-slide-sub">${skNotes[i] || '3–4 נקודות תוכן'}</div>
+        </div>
+      </div>`;
+    });
+
+    // ── Tags ──
+    const tagColors = { scratch:'', existing:'green', materials:'yellow', visual:'green' };
+    const tagLabels = { scratch:'מצגת מאפס', existing:'שיפור מצגת', materials:'מחומרים', visual:'המחשה ועיצוב' };
+
+    document.getElementById('resultTags').innerHTML = `
+      <span class="wiz-tag">${topic}</span>
+      <span class="wiz-tag ${tagColors[scenario]}">${tagLabels[scenario]}</span>
+      <span class="wiz-tag yellow">${goal}</span>
+      <span class="wiz-tag green">${slides} שקפים</span>`;
+
+    // ── Tools ──
+    const toolsMap = {
+      scratch:   ['🤖 ChatGPT / Claude','⚡ Gamma.app','🎨 Canva'],
+      existing:  ['🤖 ChatGPT / Claude','📊 PowerPoint Copilot'],
+      materials: ['🤖 ChatGPT / Claude','📄 NotebookLM','⚡ Gamma.app'],
+      visual:    ['🎨 Canva','🖼️ DALL-E / Firefly','📐 Beautiful.ai'],
+    };
+
+    const tools = toolsMap[scenario] || toolsMap['scratch'];
+    document.getElementById('toolsOutput').innerHTML = tools.map(t =>
+      `<span class="wiz-tool-pill">${t}</span>`).join('');
+
+    document.getElementById('promptOutput').textContent = prompt;
+    document.getElementById('skeletonOutput').innerHTML = skHtml;
+
+    goTo(4);
+  }
+
+  function copyResult() {
+    const text = document.getElementById('promptOutput').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.wiz-copy-btn');
+      btn.textContent = '✓ הועתק!';
+      setTimeout(() => btn.innerHTML = '📋 העתק פרומפט', 2000);
+    });
+  }
+
+  function restart() {
+    document.getElementById('f_topic').value = '';
+    document.getElementById('f_course').value = '';
+    document.getElementById('f_extra').value = '';
+    document.getElementById('f_slides').value = 7;
+    document.getElementById('slidesVal').textContent = '7';
+    document.getElementById('y3').checked = true;
+    document.getElementById('g1').checked = true;
+    document.getElementById('b1').checked = true;
+    document.getElementById('sc1').checked = true;
+    document.getElementById('t1').checked = true;
+    goTo(1);
+  }
+</script>
