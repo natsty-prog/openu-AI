@@ -1,0 +1,555 @@
+<!--
+  תרחישי עבודה למצגות
+  מיתוג: המחלקה לפדגוגיה דיגיטלית | האוניברסיטה הפתוחה
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:   #C11E6B;
+    --yellow:    #EBA521;
+    --green:     #6CB79D;
+    --secondary: #E599B6;
+    --dark:      #231F20;
+    --card-bg:   #1d1719;
+    --card-bg2:  #151113;
+    --text:      #ffffff;
+    --muted:     #c8bfc3;
+    --border:    rgba(255,255,255,.10);
+    --radius:    14px;
+  }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    direction: rtl;
+    text-align: right;
+    background: transparent;
+    padding: 0;
+  }
+
+  /* ── Header ── */
+  .sc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .sc-header h2 {
+    color: var(--text);
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+
+  .sc-tip {
+    color: var(--yellow);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── Grid ── */
+  .sc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .sc-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Card ── */
+  .sc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: transform .18s, box-shadow .18s, border-color .18s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sc-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(500px 200px at 100% 0%, rgba(255,255,255,.04), transparent 70%);
+    pointer-events: none;
+  }
+
+  .sc-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.4);
+    border-color: rgba(255,255,255,.22);
+  }
+
+  .sc-card-text { flex: 1; }
+
+  .sc-card h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .sc-card p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+
+  .sc-card-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    opacity: .85;
+  }
+
+  /* Card color variants */
+  .sc-card.pink  h3 { color: var(--primary); }
+  .sc-card.yellow h3 { color: var(--yellow); }
+  .sc-card.green h3 { color: var(--green); }
+  .sc-card.sec   h3 { color: var(--secondary); }
+
+  .sc-card .sc-arrow {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,.3);
+    transition: color .18s;
+  }
+  .sc-card:hover .sc-arrow { color: rgba(255,255,255,.7); }
+
+  /* ── MODAL ── */
+  .sc-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .sc-overlay.open { display: flex; }
+
+  .sc-modal {
+    background: #1d1719;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px 28px 24px;
+    position: relative;
+    animation: modalIn .22s ease;
+  }
+
+  @keyframes modalIn {
+    from { transform: scale(.95) translateY(10px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .sc-modal-close {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(255,255,255,.08);
+    border: none;
+    color: #fff;
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+  }
+  .sc-modal-close:hover { background: rgba(255,255,255,.16); }
+
+  .sc-modal-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .sc-modal h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  /* Sections inside modal */
+  .sc-modal-section {
+    margin-bottom: 18px;
+  }
+
+  .sc-modal-section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: rgba(255,255,255,.4);
+    margin-bottom: 8px;
+  }
+
+  /* Steps */
+  .sc-steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sc-steps li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: #fff;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .sc-step-n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Prompt box */
+  .sc-prompt-box {
+    background: rgba(0,0,0,.3);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    position: relative;
+  }
+
+  .sc-copy-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.6);
+    font-size: 11px;
+    font-family: 'Heebo', sans-serif;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .sc-copy-btn:hover { background: rgba(255,255,255,.16); color: #fff; }
+
+  /* Tool pill */
+  .sc-tool-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 8px;
+    margin-bottom: 6px;
+  }
+
+  .sc-tool-icon { font-size: 15px; }
+</style>
+
+<div id="sc-root">
+
+  <!-- Header -->
+  <div class="sc-header">
+    <h2>תרחישי עבודה למצגות</h2>
+    <span class="sc-tip">👆 טיפ: לחצו על הכרטיסיה שמתאימה לכם</span>
+  </div>
+
+  <!-- Grid -->
+  <div class="sc-grid">
+
+    <div class="sc-card pink" onclick="openModal('from-scratch')" role="button" tabindex="0" aria-label="יש לי נושא וארצה ליצור מצגת מאפס">
+      <div class="sc-card-text">
+        <h3>יש לי נושא וארצה<br>ליצור מצגת מאפס</h3>
+        <p>מתחילים מהגדרת המטרה ובונים שלד ומצגת מלאה עם AI.</p>
+      </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=160&h=160&fit=crop" alt="" aria-hidden="true">
+      <span class="sc-arrow">← פרטים</span>
+    </div>
+
+    <div class="sc-card yellow" onclick="openModal('existing')" role="button" tabindex="0" aria-label="יש לי מצגת קיימת וארצה לעבוד על בסיסה">
+      <div class="sc-card-text">
+        <h3>יש לי מצגת קיימת<br>וארצה לעבוד על בסיסה</h3>
+        <p>משפרים מצגת קיימת — רצף, ניסוח ומבנה יחידה.</p>
+      </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=160&h=160&fit=crop" alt="" aria-hidden="true">
+      <span class="sc-arrow">← פרטים</span>
+    </div>
+
+    <div class="sc-card green" onclick="openModal('redesign')" role="button" tabindex="0" aria-label="יש לי מצגת וארצה להמחיש ולעצב אותה">
+      <div class="sc-card-text">
+        <h3>יש לי מצגת וארצה<br>להמחיש ולעצב אותה</h3>
+        <p>מוסיפים חזותיים, אינפוגרפיקה ועיצוב לתוכן קיים.</p>
+      </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=160&h=160&fit=crop" alt="" aria-hidden="true">
+      <span class="sc-arrow">← פרטים</span>
+    </div>
+
+    <div class="sc-card sec" onclick="openModal('from-materials')" role="button" tabindex="0" aria-label="יש לי טקסטים וחומרים וארצה ליצור מהם מצגת">
+      <div class="sc-card-text">
+        <h3>יש לי טקסטים, חומרים<br>וארצה ליצור מהם מצגת</h3>
+        <p>מזקקים חומרים קיימים — סילבוס, PDF, מאמרים — למצגת.</p>
+      </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=160&h=160&fit=crop" alt="" aria-hidden="true">
+      <span class="sc-arrow">← פרטים</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Modal: From Scratch -->
+<div class="sc-overlay" id="modal-from-scratch" role="dialog" aria-modal="true">
+  <div class="sc-modal">
+    <button class="sc-modal-close" onclick="closeModal('from-scratch')" aria-label="סגור">✕</button>
+    <span class="sc-modal-tag" style="background:rgba(193,30,107,.18);color:#E599B6;">מצגת מאפס</span>
+    <h2>יש לי נושא — אני רוצה ליצור מצגת מאפס</h2>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">שלבי העבודה</div>
+      <ol class="sc-steps">
+        <li><span class="sc-step-n">1</span> הגדירו: מהי מטרת המצגת, מי קהל היעד ומה הסטודנט אמור לדעת בסוף.</li>
+        <li><span class="sc-step-n">2</span> בקשו מה-AI שלד ראשוני — רשימת שקפים עם כותרת ומסר לכל שקף.</li>
+        <li><span class="sc-step-n">3</span> עברו על השלד, ערכו את הרצף ואשרו לפני המשך.</li>
+        <li><span class="sc-step-n">4</span> בקשו הרחבה של כל שקף — תוכן, נקודות מפתח ודוגמאות.</li>
+        <li><span class="sc-step-n">5</span> העתיקו לכלי העיצוב (Canva / PowerPoint) וסיימו.</li>
+      </ol>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">פרומפט לדוגמה</div>
+      <div class="sc-prompt-box">
+        <button class="sc-copy-btn" onclick="copyPrompt(this)">העתק</button>אני מרצה ב[שם הקורס]. אני רוצה לבנות מצגת לימודית על הנושא: [נושא].
+קהל היעד: סטודנטים בשנה [א/ב/ג], ללא רקע מוקדם בנושא.
+מטרת המצגת: [להסביר / לסכם / להציג].
+
+בנה לי שלד של 7–9 שקפים. לכל שקף ציין:
+- כותרת ברורה
+- מסר מרכזי אחד (משפט)
+- 3–4 נקודות תוכן קצרות</div>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">כלים מומלצים</div>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🤖</span> ChatGPT / Claude</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🎨</span> Canva</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">⚡</span> Gamma.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Existing -->
+<div class="sc-overlay" id="modal-existing" role="dialog" aria-modal="true">
+  <div class="sc-modal">
+    <button class="sc-modal-close" onclick="closeModal('existing')" aria-label="סגור">✕</button>
+    <span class="sc-modal-tag" style="background:rgba(235,165,33,.15);color:#EBA521;">מצגת קיימת</span>
+    <h2>יש לי מצגת קיימת — אני רוצה לשפר אותה</h2>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">שלבי העבודה</div>
+      <ol class="sc-steps">
+        <li><span class="sc-step-n">1</span> העתיקו את תוכן המצגת (כותרות + נקודות) לתוך ה-AI.</li>
+        <li><span class="sc-step-n">2</span> בקשו ניתוח: האם הרצף הגיוני? האם יש שקפים עמוסים?</li>
+        <li><span class="sc-step-n">3</span> בקשו ניסוח מחדש לנקודות שאינן ברורות מספיק.</li>
+        <li><span class="sc-step-n">4</span> בקשו הצעות לפיצול שקפים ארוכים ואיחוד שקפים קצרים.</li>
+        <li><span class="sc-step-n">5</span> עדכנו את המצגת המקורית לפי ההמלצות.</li>
+      </ol>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">פרומפט לדוגמה</div>
+      <div class="sc-prompt-box">
+        <button class="sc-copy-btn" onclick="copyPrompt(this)">העתק</button>להלן תוכן מצגת קיימת שלי (כותרות ונקודות עיקריות):
+[הדבק כאן את תוכן המצגת]
+
+בצע עבורי את הפעולות הבאות:
+1. בדוק אם הרצף הפדגוגי הגיוני ומוביל מהפשוט למורכב.
+2. זהה שקפים עמוסים מדי והצע כיצד לפצל אותם.
+3. נסח מחדש 2–3 כותרות שאינן ברורות מספיק.
+4. הצע שקף סיכום / שאלת חשיבה לסיום.</div>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">כלים מומלצים</div>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🤖</span> ChatGPT / Claude</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">📊</span> PowerPoint Copilot</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Redesign -->
+<div class="sc-overlay" id="modal-redesign" role="dialog" aria-modal="true">
+  <div class="sc-modal">
+    <button class="sc-modal-close" onclick="closeModal('redesign')" aria-label="סגור">✕</button>
+    <span class="sc-modal-tag" style="background:rgba(108,183,157,.15);color:#6CB79D;">עיצוב והמחשה</span>
+    <h2>יש לי מצגת — אני רוצה להמחיש ולעצב אותה</h2>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">שלבי העבודה</div>
+      <ol class="sc-steps">
+        <li><span class="sc-step-n">1</span> זהו 3–4 שקפים עשירים בטקסט שניתן להמחיש חזותית.</li>
+        <li><span class="sc-step-n">2</span> בקשו מ-AI רעיונות להמחשה: דיאגרמה, ציר זמן, אינפוגרפיקה.</li>
+        <li><span class="sc-step-n">3</span> צרו את החזותיים ב-Canva או בכלי AI לתמונות.</li>
+        <li><span class="sc-step-n">4</span> הפחיתו טקסט בשקפים — הותירו רק נקודות מפתח.</li>
+        <li><span class="sc-step-n">5</span> עברו על העיצוב ובדקו עקביות צבעים וגופנים.</li>
+      </ol>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">פרומפט לדוגמה</div>
+      <div class="sc-prompt-box">
+        <button class="sc-copy-btn" onclick="copyPrompt(this)">העתק</button>להלן תוכן שקף מהמצגת שלי:
+כותרת: [כותרת השקף]
+תוכן: [הדבק את הנקודות]
+
+הצע לי 3 דרכים שונות להמחיש את הרעיון הזה חזותית
+(לדוגמה: תרשים זרימה, אינפוגרפיקה, ציר זמן, טבלת השוואה).
+לכל הצעה: תאר בקצרה מה יופיע, ואיך לבנות אותו ב-Canva.</div>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">כלים מומלצים</div>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🎨</span> Canva</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🖼️</span> DALL-E / Firefly</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">📐</span> Beautiful.ai</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: From Materials -->
+<div class="sc-overlay" id="modal-from-materials" role="dialog" aria-modal="true">
+  <div class="sc-modal">
+    <button class="sc-modal-close" onclick="closeModal('from-materials')" aria-label="סגור">✕</button>
+    <span class="sc-modal-tag" style="background:rgba(229,153,182,.15);color:#E599B6;">מחומרים קיימים</span>
+    <h2>יש לי טקסטים וחומרים — אני רוצה ליצור מהם מצגת</h2>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">שלבי העבודה</div>
+      <ol class="sc-steps">
+        <li><span class="sc-step-n">1</span> ריכזו את החומרים: סילבוס, PDF, מאמרים, סיכומים.</li>
+        <li><span class="sc-step-n">2</span> בחרו קטע מרכזי אחד (לא הכל) והדביקו ל-AI.</li>
+        <li><span class="sc-step-n">3</span> בקשו זיקוק: מהם 5 הרעיונות המרכזיים שחשוב להציג?</li>
+        <li><span class="sc-step-n">4</span> בקשו שלד מצגת המבוסס על הרעיונות שזוקק.</li>
+        <li><span class="sc-step-n">5</span> ערכו את השלד והוסיפו דוגמאות מהחומר המקורי.</li>
+      </ol>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">פרומפט לדוגמה</div>
+      <div class="sc-prompt-box">
+        <button class="sc-copy-btn" onclick="copyPrompt(this)">העתק</button>להלן קטע מחומרי הקורס שלי:
+[הדבק כאן את הטקסט — עד כ-500 מילים]
+
+המשימה:
+1. זקק את 5 הרעיונות המרכזיים הראויים להצגה לסטודנטים.
+2. בנה שלד מצגת של 6–8 שקפים המבוסס על רעיונות אלה.
+3. לכל שקף: כותרת + 3 נקודות עיקריות + דוגמה קצרה מהטקסט.</div>
+    </div>
+
+    <div class="sc-modal-section">
+      <div class="sc-modal-section-title">כלים מומלצים</div>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">🤖</span> ChatGPT / Claude</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">⚡</span> Gamma.app</span>
+      <span class="sc-tool-pill"><span class="sc-tool-icon">📄</span> NotebookLM</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(id) {
+    document.getElementById('modal-' + id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(id) {
+    document.getElementById('modal-' + id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on overlay click
+  document.querySelectorAll('.sc-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Keyboard: Enter/Space on cards
+  document.querySelectorAll('.sc-card').forEach(card => {
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') card.click();
+    });
+  });
+
+  // Escape to close
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.sc-overlay.open').forEach(m => {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+
+  // Copy prompt
+  function copyPrompt(btn) {
+    const box = btn.parentElement;
+    const text = box.innerText.replace('העתק', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ הועתק';
+      setTimeout(() => btn.textContent = 'העתק', 2000);
+    });
+  }
+</script>
